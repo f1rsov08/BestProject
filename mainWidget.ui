@@ -63,11 +63,6 @@
          </item>
          <item>
           <property name="text">
-           <string>По дате создания</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>По организации</string>
           </property>
          </item>
@@ -93,17 +88,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableView" name="tableView"/>
+      <widget class="QListWidget" name="listWidget"/>
      </item>
      <item>
       <widget class="QPushButton" name="editButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
-        <string>Редактировать</string>
+        <string>Просмотр</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Удалить</string>
        </property>
