@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>533</height>
+    <height>538</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>351</width>
-     <height>511</height>
+     <height>521</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -60,7 +60,11 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QSpinBox" name="number"/>
+       <widget class="QSpinBox" name="number">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
+       </widget>
       </item>
       <item row="3" column="1">
        <widget class="QLineEdit" name="title"/>
@@ -121,14 +125,14 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QPushButton" name="addButton">
+           <widget class="QPushButton" name="addRowButton">
             <property name="text">
              <string>Добавить</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="deleteButton">
+           <widget class="QPushButton" name="delRowButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -158,7 +162,7 @@
       <item>
        <widget class="QPushButton" name="saveButton">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>Сохранить</string>
@@ -173,6 +177,13 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="statusbar">
+      <property name="text">
+       <string>Название не может быть пустым</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
