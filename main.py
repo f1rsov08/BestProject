@@ -1,8 +1,9 @@
 import sys
 import sqlite3
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QMessageBox, QFileDialog
 from PyQt5.QtCore import QDate
+from docxtpl import DocxTemplate
 
 
 class MainWindow(QMainWindow):
@@ -123,6 +124,7 @@ class EditWindow(QWidget):
         self.cancelButton.clicked.connect(self.close)
         self.addRowButton.clicked.connect(self.addRow)
         self.deleteButton.clicked.connect(self.delete)
+        self.exportButton.clicked.connect(self.export)
         self.guysTable.itemSelectionChanged.connect(
             lambda: self.delRowButton.setEnabled(len(self.guysTable.selectedItems()) != 0))
         self.name.textChanged.connect(self.check_input)
@@ -200,6 +202,26 @@ class EditWindow(QWidget):
                 if self.guysTable.item(j, i) is None:
                     self.guysTable.setItem(j, i, QTableWidgetItem(''))
         return False
+
+    def export(self):
+        fname = QFileDialog.getSaveFileName(
+            self, 'Сохранение файла', '',
+            'Документ (*.docx);;Все файлы (*)')[0]
+        doc = DocxTemplate('template.docx')
+        month_dict = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября',
+                      'октября', 'ноября', 'декабря']
+        context = {'organization': self.organization.text(),
+                   'date': f'{self.date.date().day()} '
+                           f'{month_dict[self.date.date().month()]} '
+                           f'{self.date.date().year()} года',
+                   'num': self.number.text(),
+                   'title': self.title.text(),
+                   'reason': self.reason.toPlainText().replace('\n', '\\n'),
+                   'text': self.text.toPlainText().replace('\n', '\\n'),
+                   'items': [f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
+                             for i in range(self.guysTable.rowCount())]}
+        doc.render(context)
+        doc.save(fname)
 
 
 if __name__ == '__main__':
