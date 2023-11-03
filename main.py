@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
                              'По основанию': lambda x: self.table[x][5],
                              'По тексту': lambda x: self.table[x][6]}
         self.table = {}
-        uic.loadUi('mainWidget.ui', self)
+        uic.loadUi('ui-files/mainWidget.ui', self)
 
         self.addButton.clicked.connect(self.add)
         self.filterButton.clicked.connect(self.filter)
@@ -50,14 +50,14 @@ class MainWindow(QMainWindow):
 class FilterWindow(QWidget):
     def __init__(self):
         super().__init__()
-        uic.loadUi('filterWidget.ui', self)
+        uic.loadUi('ui-files/filterWidget.ui', self)
 
 
 class AddWindow(QWidget):
     def __init__(self, main_window):
         super().__init__()
         self.main_window = main_window
-        uic.loadUi('addWidget.ui', self)
+        uic.loadUi('ui-files/addWidget.ui', self)
         self.saveButton.clicked.connect(self.save)
         self.cancelButton.clicked.connect(self.close)
         self.addRowButton.clicked.connect(self.addRow)
@@ -118,7 +118,7 @@ class EditWindow(QWidget):
         super().__init__()
         self.item = item
         self.main_window = main_window
-        uic.loadUi('editWidget.ui', self)
+        uic.loadUi('ui-files/editWidget.ui', self)
         self.saveButton.clicked.connect(self.save)
         self.delRowButton.clicked.connect(self.delRow)
         self.cancelButton.clicked.connect(self.close)
