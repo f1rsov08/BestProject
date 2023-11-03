@@ -12,18 +12,18 @@ class MainWindow(QMainWindow):
         self.con = sqlite3.connect("orders.sqlite")
         self.cur = self.con.cursor()
         self.filt = ''
-        self.sorting_dict = {'По названию': lambda x: self.table[x][0],
-                             'По дате': lambda x: self.table[x][1],
-                             'По номеру': lambda x: self.table[x][2],
-                             'По организации': lambda x: self.table[x][3],
-                             'По заголовку': lambda x: self.table[x][4],
-                             'По основанию': lambda x: self.table[x][5],
-                             'По тексту': lambda x: self.table[x][6]}
+        self.sorting_dict = {'По названию': lambda x: x,
+                             'По дате': lambda x: self.table[x][0],
+                             'По номеру': lambda x: self.table[x][1],
+                             'По организации': lambda x: self.table[x][2],
+                             'По заголовку': lambda x: self.table[x][3],
+                             'По основанию': lambda x: self.table[x][4],
+                             'По тексту': lambda x: self.table[x][5]}
         self.table = {}
         uic.loadUi('ui-files/mainWidget.ui', self)
 
+        self.comboBox.activated.connect(self.update_table)
         self.addButton.clicked.connect(self.add)
-        self.filterButton.clicked.connect(self.filter)
         self.searchButton.clicked.connect(self.update_table)
         self.listWidget.itemDoubleClicked.connect(self.edit)
         self.update_table()
@@ -32,25 +32,19 @@ class MainWindow(QMainWindow):
         self.addWindow = AddWindow(self)
         self.addWindow.show()
 
-    def filter(self):
-        self.filterWindow = FilterWindow(self)
-        self.filterWindow.show()
-
     def edit(self, item):
         self.editWindow = EditWindow(self, item)
         self.editWindow.show()
 
     def update_table(self):
-        self.table = {i[0]: i[1:] for i in self.cur.execute(f"""SELECT * FROM orders {self.filt}""")}
+        if self.search.text():
+            self.table = {i[0]: i[1:] for i in self.cur.execute(f"""SELECT * FROM orders {self.filt} 
+            WHERE name LIKE '%{self.search.text()}%'""")}
+        else:
+            self.table = {i[0]: i[1:] for i in self.cur.execute(f"""SELECT * FROM orders {self.filt}""")}
         self.listWidget.clear()
         for i in sorted(self.table.keys(), key=self.sorting_dict[self.comboBox.currentText()]):
             self.listWidget.addItem(i)
-
-
-class FilterWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('ui-files/filterWidget.ui', self)
 
 
 class AddWindow(QWidget):
