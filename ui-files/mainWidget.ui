@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>303</width>
-    <height>454</height>
+    <width>309</width>
+    <height>468</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,18 +41,24 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="filterButton">
-         <property name="text">
-          <string>Фильтр</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="sortLabel">
          <property name="text">
           <string>Сортировка:</string>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item>
         <widget class="QComboBox" name="comboBox">
@@ -63,17 +69,32 @@
          </item>
          <item>
           <property name="text">
-           <string>По организации</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
            <string>По дате</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>По приказывающему</string>
+           <string>По номеру</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>По организации</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>По заголовку</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>По основанию</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>По тексту</string>
           </property>
          </item>
         </widget>
@@ -81,11 +102,18 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="searchButton">
-       <property name="text">
-        <string>Поиск</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="search"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="searchButton">
+         <property name="text">
+          <string>Поиск</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QListWidget" name="listWidget"/>
@@ -98,7 +126,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>303</width>
+     <width>309</width>
      <height>21</height>
     </rect>
    </property>
