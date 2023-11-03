@@ -155,7 +155,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QPushButton" name="exportlabel">
+     <widget class="QPushButton" name="exportButton">
       <property name="text">
        <string>Экспорт</string>
       </property>
