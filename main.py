@@ -72,39 +72,40 @@ class AddWindow(QWidget):
             self.statusbar.setText('')
 
     def save(self):
-        try:
-            guys = ','.join([f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
-                             for i in range(self.guysTable.rowCount())])
-        except AttributeError:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Warning)
-            msg.setWindowTitle("Пустые ячейки")
-            msg.setText("Пустые ячейки в приказывающих")
-        else:
-            reason, text = self.reason.toPlainText().replace('\n', '\\n'), self.text.toPlainText().replace('\n', '\\n')
-            self.main_window.cur.execute(
-                f"INSERT INTO orders(name,date,number,organization,title,reason,text,guys) VALUES"
-                f"('{self.name.text()}', "
-                f"'{self.date.date().toString('dd-MM-yyyy')}', "
-                f"'{self.number.text()}', "
-                f"'{self.organization.text()}', "
-                f"'{self.title.text()}', "
-                f"'{reason}', "
-                f"'{text}', "
-                f"'{guys}')")
-            self.main_window.con.commit()
-            self.main_window.update_table()
-            self.close()
+        guys = ','.join([f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
+                         for i in range(self.guysTable.rowCount())])
+        reason, text = self.reason.toPlainText().replace('\n', '\\n'), self.text.toPlainText().replace('\n', '\\n')
+        self.main_window.cur.execute(
+            f"INSERT INTO orders(name,date,number,organization,title,reason,text,guys) VALUES"
+            f"('{self.name.text()}', "
+            f"'{self.date.date().toString('yyyy-MM-dd')}', "
+            f"'{self.number.text()}', "
+            f"'{self.organization.text()}', "
+            f"'{self.title.text()}', "
+            f"'{reason}', "
+            f"'{text}', "
+            f"'{guys}')")
+        self.main_window.con.commit()
+        self.main_window.update_table()
+        self.close()
 
     def addRow(self):
         self.guysTable.setRowCount(self.guysTable.rowCount() + 1)
         for i in range(2):
             self.guysTable.setItem(self.guysTable.rowCount(), i, QTableWidgetItem())
+        self.replace_empty_cells()
 
     def delRow(self):
         selected_items = self.guysTable.selectedItems()
         for item in selected_items:
             self.guysTable.removeRow(item.row())
+
+    def replace_empty_cells(self):
+        for i in range(self.guysTable.columnCount()):
+            for j in range(self.guysTable.rowCount()):
+                if self.guysTable.item(j, i) is None:
+                    self.guysTable.setItem(j, i, QTableWidgetItem(''))
+        return False
 
 
 class EditWindow(QWidget):
@@ -116,6 +117,7 @@ class EditWindow(QWidget):
         self.saveButton.clicked.connect(self.save)
         self.delRowButton.clicked.connect(self.delRow)
         self.cancelButton.clicked.connect(self.close)
+        self.addButton.clicked.connect(self.add)
         self.addRowButton.clicked.connect(self.addRow)
         self.deleteButton.clicked.connect(self.delete)
         self.exportButton.clicked.connect(self.export)
@@ -125,11 +127,11 @@ class EditWindow(QWidget):
         self.guysTable.itemChanged.connect(self.check_input)
 
         self.name.setText(self.item.text())
-        day, month, year = map(int, self.main_window.table[self.item.text()][0].split('-'))
+        year, month, day = map(int, self.main_window.table[self.item.text()][0].split('-'))
         self.date.setDate(QDate(year, month, day))
         self.number.setValue(int(self.main_window.table[self.item.text()][1]))
-        self.title.setText(self.main_window.table[self.item.text()][2])
-        self.organization.setText(self.main_window.table[self.item.text()][3])
+        self.title.setText(self.main_window.table[self.item.text()][3])
+        self.organization.setText(self.main_window.table[self.item.text()][2])
         self.reason.setPlainText(self.main_window.table[self.item.text()][4].replace('\\n', '\n'))
         self.text.setPlainText(self.main_window.table[self.item.text()][5].replace('\\n', '\n'))
 
@@ -142,12 +144,18 @@ class EditWindow(QWidget):
     def check_input(self):
         if not self.name.text():
             self.saveButton.setDisabled(True)
+            self.addButton.setDisabled(True)
             self.statusbar.setText('Название не может быть пустым')
         elif self.name.text() in self.main_window.table.keys() and self.name.text() != self.item.text():
             self.saveButton.setDisabled(True)
+            self.addButton.setDisabled(True)
             self.statusbar.setText('Название уже занято')
+        elif self.name.text() in self.main_window.table.keys() and self.name.text() == self.item.text():
+            self.saveButton.setEnabled(True)
+            self.addButton.setDisabled(True)
         else:
             self.saveButton.setEnabled(True)
+            self.addButton.setEnabled(True)
             self.statusbar.setText('')
 
     def save(self):
@@ -157,7 +165,7 @@ class EditWindow(QWidget):
         self.main_window.cur.execute(
             f"UPDATE orders "
             f"SET name = '{self.name.text()}', "
-            f"date = '{self.date.date().toString('dd-MM-yyyy')}', "
+            f"date = '{self.date.date().toString('yyyy-MM-dd')}', "
             f"number = '{self.number.text()}', "
             f"organization = '{self.organization.text()}', "
             f"title = '{self.title.text()}', "
@@ -165,6 +173,24 @@ class EditWindow(QWidget):
             f"text = '{text}', "
             f"guys = '{guys}' "
             f"WHERE name = '{self.item.text()}'")
+        self.main_window.con.commit()
+        self.main_window.update_table()
+        self.close()
+
+    def add(self):
+        guys = ','.join([f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
+                         for i in range(self.guysTable.rowCount())])
+        reason, text = self.reason.toPlainText().replace('\n', '\\n'), self.text.toPlainText().replace('\n', '\\n')
+        self.main_window.cur.execute(
+            f"INSERT INTO orders(name,date,number,organization,title,reason,text,guys) VALUES"
+            f"('{self.name.text()}', "
+            f"'{self.date.date().toString('yyyy-MM-dd')}', "
+            f"'{self.number.text()}', "
+            f"'{self.organization.text()}', "
+            f"'{self.title.text()}', "
+            f"'{reason}', "
+            f"'{text}', "
+            f"'{guys}')")
         self.main_window.con.commit()
         self.main_window.update_table()
         self.close()
@@ -198,24 +224,32 @@ class EditWindow(QWidget):
         return False
 
     def export(self):
-        fname = QFileDialog.getSaveFileName(
-            self, 'Сохранение файла', '',
-            'Документ (*.docx);;Все файлы (*)')[0]
-        doc = DocxTemplate('template.docx')
-        month_dict = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября',
-                      'октября', 'ноября', 'декабря']
-        context = {'organization': self.organization.text(),
-                   'date': f'{self.date.date().day()} '
-                           f'{month_dict[self.date.date().month()]} '
-                           f'{self.date.date().year()} года',
-                   'num': self.number.text(),
-                   'title': self.title.text(),
-                   'reason': self.reason.toPlainText().replace('\n', '\\n'),
-                   'text': self.text.toPlainText().replace('\n', '\\n'),
-                   'items': [f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
-                             for i in range(self.guysTable.rowCount())]}
-        doc.render(context)
-        doc.save(fname)
+        try:
+            fname = QFileDialog.getSaveFileName(
+                self, 'Сохранение файла', '',
+                'Документ (*.docx);;Все файлы (*)')[0]
+            doc = DocxTemplate('template.docx')
+            month_dict = ['', 'января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября',
+                          'октября', 'ноября', 'декабря']
+            context = {'organization': self.organization.text(),
+                       'date': f'{self.date.date().day()} '
+                               f'{month_dict[self.date.date().month()]} '
+                               f'{self.date.date().year()} года',
+                       'num': self.number.text(),
+                       'title': self.title.text(),
+                       'reason': self.reason.toPlainText().replace('\n', '\\n'),
+                       'text': self.text.toPlainText().replace('\n', '\\n'),
+                       'items': [f'{self.guysTable.item(i, 0).text()}:{self.guysTable.item(i, 1).text()}'
+                                 for i in range(self.guysTable.rowCount())]}
+            doc.render(context)
+            doc.save(fname)
+        except PermissionError:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("Внимание")
+            msg_box.setText("Файл открыт в другой программе.")
+            msg_box.setStandardButtons(QMessageBox.Ok)
+            msg_box.exec_()
 
 
 if __name__ == '__main__':
