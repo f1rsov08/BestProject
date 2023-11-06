@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>538</height>
+    <width>371</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>351</width>
-     <height>521</height>
+     <height>591</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -27,6 +27,19 @@
      <widget class="QLabel" name="label">
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;Добавить приказ&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="maximum">
+       <number>1000</number>
+      </property>
+      <property name="value">
+       <number>125</number>
+      </property>
+      <property name="textVisible">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -63,6 +76,13 @@
        <widget class="QSpinBox" name="number">
         <property name="maximum">
          <number>999999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="titleLabel">
+        <property name="text">
+         <string>Заголовок</string>
         </property>
        </widget>
       </item>
@@ -147,13 +167,6 @@
          </layout>
         </item>
        </layout>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="titleLabel">
-        <property name="text">
-         <string>Заголовок</string>
-        </property>
-       </widget>
       </item>
      </layout>
     </item>
