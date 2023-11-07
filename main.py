@@ -4,6 +4,7 @@ import sqlite3
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QTableWidgetItem, QMessageBox, QFileDialog
 from PyQt5.QtCore import QDate
+from PyQt5.QtGui import QPixmap
 
 from docxtpl import DocxTemplate
 
@@ -22,6 +23,11 @@ class MainWindow(QMainWindow):
                              'По тексту': lambda x: self.table[x][5]}
         self.table = {}
         uic.loadUi('ui-files/mainWidget.ui', self)
+
+        githubPixmap = QPixmap("images/github.png")
+        self.githubIcon.setPixmap(githubPixmap)
+        self.githubIcon.setFixedSize(50, 50)
+        self.githubLabel.setOpenExternalLinks(True)
 
         self.comboBox.activated.connect(self.update_table)
         self.addButton.clicked.connect(self.add)
@@ -312,8 +318,6 @@ class EditWindow(QWidget):
                                      for i in range(self.guysTable.rowCount())]}
                 doc.render(context)
                 doc.save(fname)
-                finish = FinishWidget()
-                finish.show()
         except PermissionError:
             msg_box = QMessageBox()
             msg_box.setIcon(QMessageBox.Warning)
@@ -321,13 +325,6 @@ class EditWindow(QWidget):
             msg_box.setText("Файл открыт в другой программе.")
             msg_box.setStandardButtons(QMessageBox.Ok)
             msg_box.exec_()
-
-
-class FinishWidget(QWidget):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('ui-files/finishWidget.ui', self)
-        self.pushButton.clicked.connect(self.close)
 
 
 if __name__ == '__main__':
